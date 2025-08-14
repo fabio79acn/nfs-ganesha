@@ -1,7 +1,7 @@
 # Containerfile
 FROM registry.fedoraproject.org/fedora:latest
 
-RUN dnf -y install nfs-ganesha nfs-ganesha-vfs dbus && \
+RUN dnf -y install nfs-ganesha nfs-ganesha-vfs  dbus-daemon && \
     dnf clean all
 
 # Config di Ganesha e entrypoint
