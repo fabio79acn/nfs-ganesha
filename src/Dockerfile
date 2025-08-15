@@ -1,19 +1,24 @@
 # Containerfile
 FROM registry.fedoraproject.org/fedora:latest
 
-RUN dnf -y install nfs-ganesha nfs-ganesha-vfs  dbus-daemon && \
-    dnf clean all
+# Installa solo Ganesha (FSAL VFS). Niente dbus.
+RUN dnf -y install --setopt=install_weak_deps=False \
+        nfs-ganesha nfs-ganesha-vfs \
+    && dnf clean all
 
-# Config di Ganesha e entrypoint
+# Config di Ganesha
 COPY ganesha.conf /etc/ganesha/ganesha.conf
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
 
-# Directory usate da Ganesha/DBus
-RUN mkdir -p /export /var/run/dbus /var/log/ganesha && \
-    chown -R 0:0 /export /var/run/dbus /var/log/ganesha && \
-    chmod -R g+rwX /export /var/run/dbus /var/log/ganesha
+# Directory necessarie.
+# Nota: settiamo group=0 e g=u per compatibilità con UID arbitrari (OpenShift).
+RUN mkdir -p /export /var/log/ganesha \
+ && chgrp -R 0 /export /var/log/ganesha /etc/ganesha \
+ && chmod -R g=u /export /var/log/ganesha /etc/ganesha
 
 EXPOSE 2049/tcp
+
+# Entrypoint minimale: solo Ganesha in foreground
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
