@@ -1,0 +1,73 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nfs-ganesha
+  namespace: nfs-ganesha
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: nfs-ganesha }
+  template:
+    metadata:
+      labels: { app: nfs-ganesha }
+    spec:
+      serviceAccountName: nfs-ganesha
+      containers:
+      - name: ganesha
+        image: quay.io/fabio79acn/nfs-ganesha:main
+        imagePullPolicy: Always
+        ports:
+        - name: nfs
+          containerPort: 2049
+          protocol: TCP
+        volumeMounts:
+        - name: export
+          mountPath: /export
+        - name: ganesha-conf
+          mountPath: /etc/ganesha/ganesha.conf
+          subPath: ganesha.conf
+#       - name: dbus-run
+#         mountPath: /var/run/dbus
+        securityContext:
+          runAsUser: 0  
+          allowPrivilegeEscalation: true
+          privileged: true
+        livenessProbe:
+          exec: { command: ["bash","-lc","ss -lnt | grep -q ':2049 '"] }
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          failureThreshold: 6
+        readinessProbe:
+          exec: { command: ["bash","-lc","ss -lnt | grep -q ':2049 '"] }
+          initialDelaySeconds: 15
+          periodSeconds: 5
+          failureThreshold: 6
+#       livenessProbe:
+#         tcpSocket: { port: 2049 }
+#         initialDelaySeconds: 10
+#         periodSeconds: 10
+#       readinessProbe:
+#         tcpSocket: { port: 2049 }
+#         initialDelaySeconds: 5
+#         periodSeconds: 5
+      volumes:
+      - name: export
+        persistentVolumeClaim:
+          claimName: nfs-export
+      - name: ganesha-conf
+        configMap:
+          name: ganesha-conf
+#     - name: dbus-run
+#       emptyDir: {}
+#
+      livenessProbe:
+        tcpSocket: { port: 2049 }
+        initialDelaySeconds: 30   # prima 10
+        periodSeconds: 10
+        failureThreshold: 6
+      readinessProbe:
+        tcpSocket: { port: 2049 }
+        initialDelaySeconds: 15   # prima 5
+        periodSeconds: 5
+        failureThreshold: 6

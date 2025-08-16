@@ -1,0 +1,23 @@
+apiVersion: local.storage.openshift.io/v1alpha1
+kind: LocalVolumeSet
+metadata:
+  name: nfs-ganesha
+  namespace: openshift-local-storage
+spec:
+  deviceInclusionSpec:
+    deviceTypes:
+    - disk
+    - part
+    maxSize: 30Gi
+    minSize: 30Gi
+  fsType: ext4
+  nodeSelector:
+    nodeSelectorTerms:
+    - matchExpressions:
+      - key: kubernetes.io/hostname
+        operator: In
+        values:
+        - l2v-ops-ocs01.ocprgst.cnt.srv.sogei.it
+  storageClassName: nfs-ganesha
+  volumeMode: Filesystem
+

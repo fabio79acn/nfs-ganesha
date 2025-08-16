@@ -1,0 +1,35 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: policies
+placementBindingDefaults:
+  # Set an explicit placement binding name to use rather than rely on the default.
+  name: "rgs-test-upi"
+policyDefaults:
+  placement:
+    placementName: "rgs-test-upi"
+  categories:
+    - "CM Configuration Management"
+  controls:
+    - "CM-2 Baseline Configuration"
+  standards:
+    - "NIST SP 800-53"
+#  namespaceSelector:
+#    include: ["*"]
+#    exclude: []
+  namespace: "rgs-infra-policies"
+  remediationAction: enforce
+  complianceType: "musthave"
+  severity: low
+  pruneObjectBehavior: "None"
+  metadataComplianceType: "musthave"
+  disabled: false
+  copyPolicyMetadata: false
+
+
+policies:
+
+  - name: test-upi-nfs-ganesha
+    description: "Configura test-upi nfs-ganesha"
+    manifests:
+      - path: ./nfs-ganesha/crd/
