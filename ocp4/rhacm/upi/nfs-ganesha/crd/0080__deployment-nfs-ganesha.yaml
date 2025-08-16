@@ -33,25 +33,17 @@ spec:
           runAsUser: 0  
           allowPrivilegeEscalation: true
           privileged: true
-        livenessProbe:
-          exec: { command: ["bash","-lc","ss -lnt | grep -q ':2049 '"] }
-          initialDelaySeconds: 30
-          periodSeconds: 10
-          failureThreshold: 6
-        readinessProbe:
-          exec: { command: ["bash","-lc","ss -lnt | grep -q ':2049 '"] }
-          initialDelaySeconds: 15
-          periodSeconds: 5
-          failureThreshold: 6
 #       livenessProbe:
-#         tcpSocket: { port: 2049 }
-#         initialDelaySeconds: 10
+#         exec: { command: ["bash","-lc","ss -lnt | grep -q ':2049 '"] }
+#         initialDelaySeconds: 30
 #         periodSeconds: 10
+#         failureThreshold: 6
 #       readinessProbe:
-#         tcpSocket: { port: 2049 }
-#         initialDelaySeconds: 5
+#         exec: { command: ["bash","-lc","ss -lnt | grep -q ':2049 '"] }
+#         initialDelaySeconds: 15
 #         periodSeconds: 5
-      volumes:
+#         failureThreshold: 6
+      olumes:
       - name: export
         persistentVolumeClaim:
           claimName: nfs-export
