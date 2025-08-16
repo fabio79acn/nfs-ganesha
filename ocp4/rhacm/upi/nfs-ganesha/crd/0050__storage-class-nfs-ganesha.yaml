@@ -17,7 +17,7 @@ spec:
       - key: kubernetes.io/hostname
         operator: In
         values:
-        - l2v-ops-ocs01.ocprgst.cnt.srv.sogei.it
+        - l2v-ops-ocs01.ocprgst.cnt.srv.mydomain.it
   storageClassName: nfs-ganesha
   volumeMode: Filesystem
 
