@@ -3,6 +3,7 @@ FROM registry.fedoraproject.org/fedora:40
 RUN dnf -y install --setopt=install_weak_deps=False \
       nfs-ganesha nfs-ganesha-vfs iproute \
       setfacl \
+      acl     \
   && dnf clean all
 
 COPY ganesha.conf /etc/ganesha/ganesha.conf
